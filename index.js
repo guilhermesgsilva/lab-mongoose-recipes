@@ -21,7 +21,45 @@ mongoose
   })
   .then(() => {
     // Run your code here, after you have insured that the connection was made
+    updateDatabase()
   })
   .catch(error => {
     console.error('Error connecting to the database', error);
   });
+
+async function updateDatabase() {
+  try {
+    const firstRecipe = await Recipe.create({
+      title: "Spaghetti Carbonara",
+      level: "Easy Peasy",
+      ingredients: ["3 large free-range egg yolks", "40 g Parmesan cheese , plus extra to serve", "1 x 150 g piece of higher-welfare pancetta", "200 g dried spaghetti", "1 clove of garlic", "extra virgin olive oil"],
+      cuisine: "Italian",
+      dishType: "main_course",
+      image: "https://img.jamieoliver.com/jamieoliver/recipe-database/oldImages/large/1558_1_1436795948.jpg?tr=w-800,h-1066",
+      duration: 10,
+      creator: "Gennaro",
+    });
+
+    console.log(firstRecipe.title);
+
+    const allRecipes = await Recipe.insertMany(data);
+
+    allRecipes.forEach((recipe) => {
+      console.log(recipe.title);
+    });
+
+    await Recipe.findOneAndUpdate(
+      {title:"Rigatoni alla Genovese"},
+      {duration: 100},
+    );
+
+    await Recipe.deleteOne({title: "Carrot Cake"});
+    console.log("Carrot Cake successfully deleted");
+
+  } catch (e) {
+      console.log("error occurred", e);
+  } finally {
+      mongoose.connection.close();
+  }
+
+}
